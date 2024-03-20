@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toxic Comment Classifier</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 p-4">
+    <div class="flex flex-col justify-center items-center gap-10 mt-10 content">
+        <h1 class="text-3xl font-bold mb-4">Toxic Comment Classifier</h1>
+        <form id="comment-form" class="mb-4">
+            <textarea id="comment-input" name="comment" rows="4" cols="50"
+                class="w-full border rounded-md p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter comment"></textarea><br>
+            <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Predict</button>
+        </form>
+        <div id="result" class="mt-4 bg-gray-200 rounded-md p-4 text-center">Result will appear here</div>
+    </div>
+    <footer class="text-center text-gray-500 text-sm mt-4">
+        <p>Developed by <a href="https://github.com/habeebmoosa" class="text-blue-500" target="_blank">Habeeb Moosa</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('comment-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const comment = document.getElementById('comment-input').value;
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ comment }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if (data.predicted_label == 0) {
+                        resultDiv.innerHTML = `<p class="text-lg font-bold">The comment is likely to be Non-Toxic</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p class="text-lg font-bold">The comment is likely to be Toxic</p>`;
+                    }
+                    resultDiv.classList.remove('hidden');
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+
+</html>
