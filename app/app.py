@@ -6,12 +6,12 @@ import joblib
 
 app = Flask(__name__)
 
-Toxic_model = load_model('model.h5')
+Toxic_model = load_model('model/model.h5')
 
-max_len = 200 
+tokenizer = joblib.load('tools/tokenizer.pkl')
+label_encoder = joblib.load('tools/label_encoder.pkl')
 
-tokenizer = joblib.load('tokenizer.pkl')
-label_encoder = joblib.load('label_encoder.pkl')
+max_len = 200
 
 @app.route('/')
 def home():
@@ -29,3 +29,6 @@ def predict():
     result = int(predicted_label[0])
     
     return jsonify({'predicted_label': result})
+
+if __name__ == '__main__':
+    app.run(debug=True)
